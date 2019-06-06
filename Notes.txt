@@ -1,0 +1,500 @@
+What is an algorithm?--------------------------------------------------------------------------------------------------------------------------------------------------------
+An algorithm is a sequence of ambiguous instructions for solving a problem, i.e., for obatining a required output for any legit input in a finite amount of time.
+Important Points:
+The nonambiguity requirement for each step of an algorithm cannot be compromised
+the range of inputs for which an algorithm works has to be specified carefully
+the same algorithm can be represented in several different ways
+there may exist several algorithms for solving the same problem
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+sequential search
+int search(values,length,key){
+	for i in range(length){
+		if values[i] == key{
+			return i
+		}
+	}
+	return -1
+}
+Assume
+probability of a successful search is equal to P(0<=p<=1)
+probability of the first match occuring in the ith position is the same for every i
+With a successful search the probability of the first match occuring in the ith position is p/n for every i
+number of comparisons: i
+with an unsuccesful search the number of comparisons will be n (all of the items in the array) with the probability being 1-p
+Cavg(n) = ((p * n+1) /2) + n*(1-p)
+if p = 1 the number of searches is (n+1)/2
+if p=0 or an unsuccessful then it is n
+Big Theta,O,Omega------------------------------------------------------------------------------------------------------------------------------------------------------------
+Amortized efficieny 
+Does not apply to a single run of the algorithm but 
+Rather to a sequence of operation performed on the same data structure #itstrivial
+some situations might be expensive but the total time to perform n operations is always
+significantly better than the worst case efficiency multiplied by n
+this was discovered by Robert Tarjan
+Big O(g(n))- is equal to the set of f(n) where there exists positive constants c and N(not) s.t. 0 <=f(n)<= c*g(n) for all n >= N(not)
+
+Big Omega(g(n)) - is equal to the set of f(n) where there exists positive constants c and N(not) s.t 0 <= c*g(n) <= f(n) for all n>- N(not)
+1
+Big Theta(g(n)) - is equal to the set of f(n) where there exists positive constants c1 c2 and N(not) s.t. o < c1* g(n) <= f(n) <= c2*g(n) for all n > n(not)
+
+Big O - upper bound of the function never worse then
+Big Omega - Lower bound of the function never worse than
+Big Theta - Tight asymptotic bound of the function strictly this
+
+you want to use big O when u can escape from the algorithm early like trying to find the if everything is positive 
+
+if Big O and Big Omega is dfferent then u will not have a Big Theta 
+
+first try with Big Theta and then try with Big O and Big Omega
+
+O-Notation: is 100n+5 a part of the set of O(n^2)- yes it is bounded above by n^2 but this is not as useful
+
+100n + 5 <= 100n + n for all n >= 5 = 101n <= 101n^2
+
+Try to find an upper bound for f(n) = 3n+8
+O(n)
+3n+8 <= 4n
+3n+8 <= 3n+8n
+3n+8 <= 11n for all n>=1
+
+REMEMBER C and N(not) HAVE TO BE POSITIVE INTEGER CONSTANTS
+AND N HAS TO BE GREATER THAN A CONSTANT
+
+Big Theta
+prove upper bound then prove lower bound
+
+
+Know the properties of logs
+
+log(1) = 0
+loga(a) = 1
+loga(x^y) = yloga(x)
+Combinatorics
+Perumtation formula = n!
+k combination of an n-element set (nCk) = n!/k!(n-k)!
+number of subsets in a set (power set)= 2^n
+summation:
+sum(c*i)= c * sum(i)
+sum(i) from c to n = sum(i+c) from 0 to n-c
+
+sum(i) from c to n = sum(i) 0 to n - sum(i) 0 to n-c
+sum(a + b) = sum(a) + sum(b)
+sum(n-i) from 0 to n = sum(i)
+sum(1) from i = 1 to n = n
+sum(c) from 1 to n = c*n
+sum(i) from 1 to n = ((n+1)n)/2
+sum(i^2) from i to n = (n*(n+1)*(2n+1))/6
+sum of a geometric series or A^i = ((A^n+1) - 1)/(A-1)
+sum(1/i) = approx log(n)
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Assume f(n) is measuered in microseconds, what is the largest n you can solve for in time t?
+1 hour = 10^6/s * 60s/, * 60 m/h = 3.6 e9 muS
+if it grew logrithmically it would be 2^3.6e9
+if it was n^1/2 then it would be (3.6e9)^2
+lim n-> inf then 0 implies that t(n) has a smaller order of growth if it is constant then t(n) has the same and if it is infinity then then t(n) is larger 
+also u can use the hospital rule do analyze this case
+you also will sometimes need to use sterlings formula n! approximates sqrt(2 pi n) * (n/e)^n for larger n
+example 1:
+compare 0.5 * n (n-1) and n^2
+1/2 limit n->  (n^2-n) / n^2 = 1 - 1/n thus it is 1/2 and therefore the same order of growth
+example 2:
+compare log2(n) and sqrt(n)
+theorem if t(n) is a member of O(g1(n)) and t2(n) is a member of O(g2(n)) then t1(n) + t2(n) is a mameber of the max(g1(n),g2(n))
+Proof: the proof extends to orders of growth the following simple fact about 4 arbitrary real numbers a1 b1 a2 b2 : if a1<= b1 and a2 <= b2 then a1+a2 <= b1 + b2 <= 2* max(b1,b2)
+since t1(n) is a member of O(g1(n)) then there exists some positive constants c1 and n1 such that t1(n) <= c1 * g1(n) for all n greater n1
+similarly since t2(n) is a member of O(g2(n)) then there exists some positive constants c2 and n2 such that t1(n) <= c1 * g1(n) for all n greater than n2
+thus let us denote that c3 = max{c1,c2} and consider n >= max(n1,n2) so that we can use both inequalities 
+adding them yield t1(n) + t2(n) <= c1 * g1(n) + c2 * g2(n) <= c3 * g1(n) + c3 * g2(n) <= c3 * 2 * max(g1,g2)
+
+hence t1(n) + t2(n) is a member of big O of the max(g1,g2) with constant c and n_o respectfully equal to c = 2*c3 and n_o = max(n1,n2)
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+int a = 5
+a << 1;
+a now = 10
+left shift is like multiplying by 2 
+a = 5 
+a >> 1;
+a now = 2
+right shift is like floor dividing by 2
+bitwise operators
+& and
+| or
+^ xor
+~ not
+	1101
+  | 1001 
+  = 1101
+with unsigned ints shifting right always fills in the leftmost bit with zeros
+with a signed int shifting right fills in the leftmost bits with the sign bit
+we can have bitvector be a int with 0 and then have a seperate setter variable be 1 << (currentChar - 'a')
+then we and the two vectors then or it to show that we have seen it
+V = 0
+for c in S: 
+	setter = 1 << (c - 'a')
+	V = V | setter if V & setter return false
+Selection sort always makes (n*(n-1))/2 comparisons
+and at most n-1 swaps
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Recurrence relations are used to produce a closed form expression for the nubmer of times the principal operation occurs
+T(n) = aT(n/b) + f(n) could also be T(n)= aT(n-b) + f(n)
+a = number of times that the recursive call is made in 1 execution 
+b = constant by which the input decreases
+f(n) = amount of work performed by the function excluding recursive calls
+X(0) = 0 is the initial condition which is the base case
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Solve recurrence relations with backward substitution (5 step process)
+X(n) = X(n-1)+ (n-1)
+1)replace n with n-1
+X(n-1) = X(n-2) + (n-2)
+X(n) now equals
+X(n) = X(n-2) + (n-2) + (n-1)
+2)replace n with n-2
+X(n-2) = X(n-3) + (n-3)
+X(n) = X(n-3) + (n-3) + (n-2) + (n-1)
+3)now we derive a general form
+X(n) = X(n-i) + (n-i) + (n-i + 1) + (n-1 + 2) + ... + (n-1)
+4)now use initial condition or base case
+so we make x(n-i) = 0 cuz that is our base case for selection sort
+use initial condition n-i = 0
+n = i
+5)finally produce a closed-form expression
+X(n-n) + (n-n) + (n-n+1) + (n-n+2)+ ... + (n-1)
+thus it becomes sum(i) from n to n-1
+and this is (n(n-1))/2 
+x(n) = x(n/2) + 1, x(1) = 1
+since it is divide and conquer replace n with n/2
+x(n/2) = x(n/4) + 1
+x(n) = x(n/4) + 2
+x(n/4) = x(n/8) + 3
+x(n) = x(n/(2^k)) + k
+n/(2^k) = 1
+2^k = n
+x(n) = x(n/(2^lg(n))) + lg(n)
+since 2^lg(n) = n 
+x(n) = x(n/n) + lg(n)
+x(n) = 1 + lg(n)
+x(n) = 2x(n/2) + n where x(1) = 1
+x(n/2) = 2x(n/4) + (n/2)
+x(n) = 2*[x(n/2) + (n/2)] + n
+x(n) = 4x(n/4) + 2n
+x(n/8) = 2x(n/8) + n/4
+x(n) = 4[2x(n/8)+ n/4] + 2n
+x(n) = 8x(n/8) + 3n
+x(n) = 2^k* x(n/2^k) + k*n
+n/2^k = 1 
+2^k = n
+k = lg(n)
+x(n) = n * x(n/n) + nlg(n)
+for an odd number of disks a -> c, a->b, c->b for 3 disks u need 7 moves
+for even numbers a->b, a->c, b->c
+x(n) = 2x(n-1) + 1
+x(n-1) = 2x(n-2) + 1
+x(n-1) = 2[2x(n-2)+1]+1
+x(n-1) = 4x(n-2)+3
+x(n-2) = 2x(n-3) + 1
+x(n) = 8x(n-3) + 7
+x(n) = 2^i(n-i) + ((2^i) - 1)
+n-k = 1
+k = n - 1
+2^(n-1) x(n-n-1) + (2^n-1) -1
+2^(n-1) + 2(n-1)
+(2^n) - 1
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+argv[0] == ./<Name>
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+X(n) = 3x(n/3)+n
+X(3^k) = 3x(3^k-1) + 3^k
+X(3^k-2) = 3x(3^k-3) + 3^k-2
+x(3^k) = 3^2[3x(3^k-3)+3^k-2] + 2 * 3^k
+3^3 * x(3^k-3)) + 3^k+1
+3^i * x(3^k-i) + i * 3^k
+3^k-i = 1
+k = i
+x(3^k) = 3^k x(3^k-k) + k * 3^k
+x(n) = n * x(3^0) + log3(n) * n
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+get_ways(num_stairs):
+	ways = []
+	if ways <= 0:
+		ways.append([])
+	else:
+		for i in range(1,4):
+			if num_stairs >= i:
+				result = get_ways(num_stairs - i)
+				for r in result:
+					r.append(i)
+				ways.extend(result)
+	return ways
+if u can come close to borowski's running time u get +10 points 
+do 
+./dnwaiondio 20 > /dev/null
+to make sure there is no output
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+bubble sort 
+best Theta(n)
+worst Theta(n^2)
+avg  Theta(n^2)
+
+selection sort
+best Theta(n^2)
+worst Theta(n^2)
+avg Theta(n^2)
+
+insertion sort
+best theta(n)
+worst theta(n^2)
+avg theta(n^2)
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Brute force - testing all possibilities and selecting those that met certain criteria
+class neighbor {
+	x:float
+	y:float
+	name:string
+}
+nearest_neighbors(Neighbor neighbors[]. const int size){
+	mindist = float("inf")
+	nearest_neighbors[2];
+	for i in size-1:
+		for j = i; j < size; j++
+			distance = (neighbors[i].x - neighbors[j].x))**2 - (neighbors[i].y-neighbors[j].y)**2
+			if distance < mindist:
+				mindist = distance;
+				nearest_neighbors = [i,jj
+	return [neighbors[nearest[0]],neighbors[nearest[i]]] 
+
+}
+find the points on the convex hull of points
+
+a set of points finite or infinite in the plane is called convex if for any two points p and q in the sense the entire line segment with endpoints p and q belongs to the set
+
+the convex hull of a set S of points is the smallest convex set containing S
+
+valgrind --leak-check = yes ./program
+
+and it is good if u get definitely lost: 0 bytes in 0 blocks
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+A graph is a set of vertices and edges graphs can be directed undirected weighted or unweighted 
+undirected means u go from one to another and u can go both ways while directed only means one way
+weighted means the transition has a certain value like u would use in A* search
+to store a graph u wanna do an adjacency matrix
+where u have a row and col for aech node
+and then have each index in the matrix represent the transition and put a 1 or 0 or the weight 
+for this matrix you need Theta(V^2) space to hold the values of the graph
+
+Adjacency List:
+You would have a list of size V and then each index in the list would be a list of the things it is related to Theta(V+E)
+
+		Adjacency Matrix | Adjacency List
+Run Time Theta(1)			O(V)/O(d)
+for 
+determining 
+transtion--------------------------------
+Run Time for determining all vertices adjacent to given vertex
+		Theta(V)		  	Theta(d) (degree of the vertex or # of edged)    
+							O(V)
+space complexity
+	Theta(V^2)			Theta(V+E)
+When to use
+	small dense graph 	Large and Sparse
+When in doubt pick the list and when ur prototyping use the matrix
+Breadth First Search
+start with lowest numbered vertex in the graph 
+visit the first adjacency level then 2nd then so on and visit anything unconnected afterwards
+[0,0,0,0,0,0,0,0,0]
+ 1,2,3,4,5,6,7,8,9
+ count = 0
+ if v is marked with a 0 call bfs_helper increase count 
+ initialize a Q with V 
+ Queue of vertices to traverse: 1
+ while queue is not empty 
+ for each vertex adjacent from the fron vetex if w is marked with 0 
+ count +=1 mark w with count 
+ and add w to queue
+BFS():
+	arr = zeros(1,n)
+ 	for i in arr:
+ 		if arr[i] == 0:
+ 			bfs(i)
+bfs(n) 
+	q = q
+	q.put(n)
+	while q.empty == false
+		curr = q.peek()
+		for i in matrix[curr]:
+			if i == 0:
+				q.put(i)
+				count += 1
+				arr[i] = count
+		q.pop()
+DFS():
+	arr = zeros(1,n)
+	for v in arr:
+		if v == 0:
+			dfs(v)
+dfs(v):
+	count += 1
+	for i in len(arr[v]) 
+		if w[i] == 0:
+			return dfs(i)
+run time 
+	Matrix 		list
+dfs Theta(v^2)	Theta(V+E)
+bfs same 		same
+Topological sort
+we have a list of vertices
+[2,3,5,7,8,9,10,11]
+indegree
+[1,0,0,0,2,2,2,2]
+find lowest numbered vertex with lowest indegree
+in this case remove 3 and for every vertex that 3 goes into decrement the indegree
+and do so on for the rest of the graph until you remove every node
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+static is only accessible for the current cpp file that the function is defined in
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Master Theorem
+T(n) = aT(n/b) + f(n)  
+a = # of times the recursive function is called in one run
+def func():
+	#something
+	return func + func
+would make a = 2
+b = the factor by which input size is divided
+so like if we input f(n) 
+the recursive call would do f(n/2)
+where 2 = b
+f(n) = amount of work performed in the function
+T(n) = 
+Theta(n^d) if a < b^d
+Theta(n^d logb(n)) if a = b^d
+Theta(n^(logb(a))) if a > b^d
+logb is log base b of 
+while it says theta if the f(n) can break out then it is a big O not theta
+-------------------------------------------------------------------------------------------------------------------------------------------------------
+lexicographicPerm(s):
+	while the most recent perm has two consec elements in increasing order
+		i = highest index of lower with consec increasing order
+		j = highes index of higher values with consec increasing order
+		swap i and j
+		reverse i+1 to end
+		add the new string to the vector
+	return vector
+Theta(n*n!)
+in the case of balloon 
+it would be 7!/(2!*2!) because balloon has 2 repeating chars so if it was ballloon
+it would be 7!/(3!*2!)
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+Binary Reflected Graycode
+BFG(n)
+	generates recursivey the binary reflecteed gray code of order n
+	if n = 1 make list l containing bit strings 0 and 1 in this order
+	else generate list L1 of bit strings size n-1 by calling BRGC(n-1)
+		copy list L1 to L2 in reversed order
+		add 0 in front of each bit string in list L1
+		add 1 in front of each bit string in list L2 
+		append L2 to L1 to get list L
+	return L
+---------------------------------------------------------------------------------------------------------------------------------------------------------
+Learn Lamuto Partition page 159 in the book
+Partitions subarray by lomuto's algorithm using first element as pivot 
+Input A subarray[l...r]
+--------------------------------------------------------------------------------------------------------------------------------
+when doing a midpoint
+(lo + hi)/2
+instead do 
+lo + ((hi-lo)/2)
+mergesort is better for files where u needa do stuff in place
+--------------------------------------------------------------------------------------------------------------------------------
+counting # of inversion
+An inversion is when a larger number precedes a smaller number in the array
+--------------------------------------------------------------------------------------------------------------------------------
+The number of black nodes on any single path from but NOT INCLUDING THE NODE x down to a leaf is called the black height of a the node
+Lemma: a red-black tree with n internal nodes (nodes that arent the dummy node t.nil) has height at most 2lg(n+1)
+proof: induction on the height of x
+base case: height = 0 -> x is a leaf(t.nil)
+where bh is black height
+(2^bh(x))-1 = 2^0-1 = 0
+thus there is 0 internal nodes
+Inductive hypothesis: assume it works for any node x of positive height that is x has at least (2^bh(x))-1)
+Inductive step:
+Internal node x with 2 children
+2 cases
+x is red and has 2 black children
+x is black and has 2 red children
+and thus those red children whould have 2 black null children
+the height of a child
+height of a child x is < the height of x itself implies each child has at least (2^bh(x)-1)-1 internal nodes Thus the subtree rooted at x contains at least (2^bh(x)-1)-1 + (2^bh(x)-1)-1 + 1 thus there are 2 * (2^bh(x)-1) - 2 + 1 = (2^bh(x))-1
+let h be the height of the tree by property 4 (if a node is red than its children are black), at least half the nodes from the root to a leaf (not including the leaf) must be black black height of the root must be >= h/2
+
+n >= (2^(h/2))-1
+lg(n+1) >= lg(2^(h/2))
+lg(n+1) >= h/2
+2lg(n+1) >= h
+--------------------------------------------------------------------------------------------------------------------------------
+Remember to throw a tree_exception when u try to add a duplicate
+------------------------------------------------------------------------------------------------------------------------------
+Horner's rule for evaluating a polynomial
+p(x) = 2x^4 - x^3 + 3x^2 + x -5
+this would have 4 + 3 + 2 + 1
+which is a summation from 0 to d
+and thus it would be (d*(d+1))/2
+which is n^2
+and thus to do it faster u can factor out x
+so x(2x^3-x^2+3x+1)-5
+x(x(2x^2-x+3)+1)-5
+x(x(x(2x-1)+3)+1)-5
+def Horner(P[0-n],x):
+	// evaluates a polynomial at a given point by horners rule
+	// input an array P[0-n] which are coefficients of a polynomial of degree n
+	// stored from the lowest to the highest
+	// and a number x 
+	// Output: the value of the polynomial at X
+	p = P[n]
+	for i in range(n-1,-1,-1):
+		p = x * p + p[i]
+	return p
+-----------------------------------------------------------
+binary exponentiation
+computing a^n is n-1 multiplications
+let n = bI ... bi .... b0
+p(x) = bIx^I + ... + bi x^i + ... + b0
+13 in binary is = 1101
+a^n = a
+horner's rule for the binary polynomial p(2)
+p - i
+for i= I-1 to 0
+	p - 2p + bi
+implicatiosn for a^n = a^p(2)
+ap = a^1
+for i = i-1 to 0
+	ap = a^2p+bi
+LeftRightBinaryExponentiation(a, b(n))
+	//computes a^n
+	//Input a number A and a list b(n) of binary digits
+	proudct = a 
+	for i = I-1 to 0 do
+		product = product * product
+		if(b[i] = 1):
+			product *= a
+	return product
+a    b(n)     product     i
+2    1101     2           2
+	          4   		  1
+	          8			  0
+	          64          0
+	          4096
+	          8192
+number of multiplications goes to lg(n)
+b-1 <= M(n) <= b-1+b-1 or 2(b-1)
+where b is the number of bits used to represent exponent n
+b-1 = floot(lg(n))
+thus it is theta(lg(n))
+--------------------------------------------------------------------------------------------------------------------------
+Dynamic Programming
+
+The Coin Row problem
+maximize the amount of money subject to the constraint that u cannot pick up adjacent coins
+
+make a coins array
+c = [0,5,1,2,10,6,2]
+f = [0,0,0,0,0,0,0]
+s = [0,0,0,0,0,0,0]
