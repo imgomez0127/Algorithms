@@ -5,23 +5,54 @@
  * Description : Tries to solve the water jug problem with 3 jugs using a breadth first search
  * Pledge      : "I pledge my honor that I have abided by the Stevens honor system"-igomez1
  ******************************************************************************/
+#include <stdio.h>
+#include <stdlib.h>
 #include <iostream>
 #include <sstream>
 #include <vector>
 #include <queue>
+#include <algorithm>
+#include <memory>
 using namespace std;
 // Struct to represent state of water in the jugs.
+enum Bucket{A, B, C};
+
 struct State {
-    int a, b, c;
+    public:
+    int buckets[3];
+    shared_ptr<State> parent;
     string directions;
-    State(int _a, int _b, int _c) : a(_a), b(_b), c(_c) { }
+
+    State(int _a, int _b, int _c) {
+        buckets[0] = _a;
+        buckets[1] = _b;
+        buckets[2] = _c;
+        parent = nullptr;
+        directions = "";
+    }
+
     // String representation of state in tuple form.
     string to_string() {
         ostringstream oss;
-        oss << "(" << a << ", " << b << ", " << c << ")";
+        oss << directions << " (" << buckets[A] << ", " << buckets[B] << ", " << buckets[C] << ")";
         return oss.str();
     }
+
+    int operator[](int index) const{
+        if(index < 0 || index > 3){
+            cout << "tried index " << index << endl;
+            cerr << "Index out of bounds" << endl;
+            exit(1);
+        }
+        return buckets[index];
+    }
+
+    bool operator==(const State& state){
+        return buckets[A] == state[A] && buckets[B] == state[B] && buckets[C] == state[C];
+    }
+
 };
+
 class WaterJugPuzzle{
     /**
     * This class takes in the values for the max of each jug and the respective goals for each jug
@@ -29,206 +60,86 @@ class WaterJugPuzzle{
     * using a breadth first search approach through all the possible options
     */
     private:
-        int a_max;
-        int b_max;
-        int c_max;
-        int a_goal;
-        int b_goal;
-        int c_goal;
-        vector<vector<State>> beenTraversed;
+        int bucket_max[3];
+        State goal_state;
+        int pours_directions[6][2]{
+            {C, A},
+            {B, A},
+            {C, B},
+            {A, B},
+            {B, C},
+            {A, C}
+        };
+        vector<vector<bool>> been_traversed;
+
     public:
         // takes in the input for the jugs max and goals and creates a matrix with an empty state
-        WaterJugPuzzle(int a_,int b_, int c_,int agoal, int bgoal, int cgoal): a_max{a_},b_max{b_},c_max{c_},a_goal{agoal},b_goal{bgoal},c_goal{cgoal}{
-            
-            for(int i = 0; i <= a_max; i++){
-                vector<State> nullList(b_max+1,State(0,0,0));
-                beenTraversed.push_back(nullList);
-            }
+        WaterJugPuzzle(int * args): goal_state{State(args[3],args[4],args[5])}{
+            bucket_max[A] = args[A];
+            bucket_max[B] = args[B];
+            bucket_max[C] = args[C];
+            been_traversed = vector<vector<bool>>(bucket_max[A]+1,vector<bool>(bucket_max[B]+1, false));
         }
-        bool pour(State &s, int pourType){
+
+        void pour(shared_ptr<State> &s, int* pourType){
             /**
             * Takes in a refrence to an input state s and an int which specifies which pour is being perfomed it first checks whether or not
             * the pour can be performed if it cannot be performed then it returns false else if it is true it modifies that state according to the pour
             * and returns true
             */
-            if(pourType == 1){
-                //Pour C to A
-                int contentDiff = a_max - s.a;
-                int pourAmt = contentDiff;
-                if(contentDiff == 0){
-                    return false;
-                }
-                if(s.c == 0){
-                    return false;
-                }
-                if(contentDiff > s.c){
-                    s.a += s.c;
-                    pourAmt = s.c;
-                    s.c = 0;
-                    
-                }
-                else{
-                    s.a = a_max;
-                    s.c -= contentDiff;
-                }
-                s.directions = "Pour " + to_string(pourAmt) + ((pourAmt > 1)?" gallons":" gallon") + " from C to A. " + s.to_string();
-
-                return true;
-            }
-            if(pourType == 2){
-                // Pour B to A
-                int contentDiff = a_max - s.a;
-                int pourAmt = contentDiff;
-                if(contentDiff == 0){
-                    return false;
-                }
-                if(s.b == 0){
-                    return false;
-                }
-                if(contentDiff > s.b){
-                    s.a += s.b;
-                    pourAmt = s.b;
-                    s.b = 0;
-                }
-                else{
-                    s.a = a_max;
-                    s.b -= contentDiff;
-                }
-                s.directions = "Pour " + to_string(pourAmt) + ((pourAmt > 1)?" gallons":" gallon") + " from B to A. " + s.to_string();
-                return true;
-            }
-            if(pourType == 3){
-                //Pour C to B
-                int contentDiff = b_max - s.b;
-                int pourAmt = contentDiff;
-                if(contentDiff == 0){
-                    return false;
-                }
-                if(s.c == 0){
-                    return false;
-                }
-                if(contentDiff > s.c){
-                    s.b += s.c;
-                    pourAmt = s.c;
-                    s.c = 0;
-                }
-                else{
-                    s.b = b_max;
-                    s.c -= contentDiff;
-                }
-                s.directions = "Pour " + to_string(pourAmt) + ((pourAmt > 1)?" gallons":" gallon") + " from C to B. " + s.to_string();
-                return true;
-            }
-            if(pourType == 4){
-                //pour A to B
-                int contentDiff = b_max - s.b;
-                int pourAmt = contentDiff;
-                if(contentDiff == 0){
-                    return false;
-                }
-                if(s.a == 0){
-                    return false;
-                }
-                if(contentDiff > s.a){
-                    s.b += s.a;
-                    pourAmt = s.a;
-                    s.a = 0;
-                }
-                else{
-                    s.b = b_max;
-                    s.a -= contentDiff;
-                }
-                s.directions = "Pour " + to_string(pourAmt) + ((pourAmt > 1)?" gallons":" gallon") + " from A to B. " + s.to_string();
-                return true;
-            }
-            if(pourType == 5){
-                //Pour B to C
-                int contentDiff = c_max - s.c;
-                int pourAmt = contentDiff;
-                if(contentDiff == 0){
-                    return false;
-                }
-                if(s.b == 0){
-                    return false;
-                }
-                if(contentDiff > s.b){
-                    s.c += s.b;
-                    pourAmt = s.b;
-                    s.b = 0;
-                }
-                else{
-                    s.c = c_max;
-                    s.b = 0;
-                }
-                s.directions = "Pour " + to_string(pourAmt) + ((pourAmt > 1)?" gallons":" gallon") + " from B to C. " + s.to_string();
-                return true;
-            }
-            if(pourType == 6){
-                //Pour A to C
-                int contentDiff = c_max - s.c;
-                int pourAmt = contentDiff;
-                if(contentDiff == 0){
-                    return false;
-                }
-                if(s.a == 0){
-                    return false;
-                }
-                if(contentDiff > s.a){
-                    s.c += s.a;
-                    pourAmt = s.a;
-                    s.a = 0;
-                }
-                else{
-                    s.c = c_max;
-                    s.a = 0;
-                }
-                s.directions = "Pour " + to_string(pourAmt) + ((pourAmt > 1)?" gallons":" gallon") + " from A to C. " + s.to_string();
-                return true;
-            }
-            return false;
+            State state = *s;
+            string names[3]{"A", "B", "C"};
+            int start = pourType[0];
+            int end = pourType[1];
+            int pour_amt = max(min(bucket_max[end] - state[end], state[start]),0);
+            s->buckets[end] += pour_amt;
+            s->buckets[start] -= pour_amt;
+            ostringstream oss;
+            oss << "Pour " << pour_amt << (pour_amt > 1 ? " gallons" : " gallon")
+                << " from " << names[start] << " to " << names[end] << ".";
+            s->directions = oss.str();
         }
+
         string SolveWaterJug(){
             /**
             * This function returns the string which contains the steps to reach the solution.
             * The solution is found using a breadth first search through the possible types of pours
             */
-            State start(0,0,c_max);
-            start.directions = "Initial state. " + start.to_string();
-            beenTraversed[0][0] = start;
-            queue<State> q;
+            shared_ptr<State> start = make_shared<State>(0,0,bucket_max[C]);
+            start->directions = "Initial state.";
+            been_traversed[0][0] = true;
+            queue<shared_ptr<State>> q;
             q.push(start);
             string S = "";
+            shared_ptr<State> cur_state = nullptr;
             do{
-                State currState = q.front();
+                cur_state = q.front();
                 q.pop();
-                if (currState.a == a_goal && currState.b == b_goal && currState.c == c_goal){
-                    S = currState.directions;
+                if (*cur_state == goal_state){
                     break;
                 }
-                    for(int i = 1; i < 7; i++){
-                        State newState(currState.a,currState.b,currState.c);
-                        if(pour(newState,i)){
-                            if(beenTraversed[newState.a][newState.b].to_string() == "(0, 0, 0)"){
-                                q.push(newState);
-                                beenTraversed.at(newState.a).at(newState.b) = currState;     
-                        }   
-                        
+                for(int i = 0; i < 6; i++){
+                    shared_ptr<State> new_state = make_shared<State>((*cur_state)[A], (*cur_state)[B], (*cur_state)[C]);
+                    new_state->parent = cur_state;
+                    pour(new_state, pours_directions[i]); //side affecting opeartion changes values of state
+                    State new_state_val = *new_state;
+                    if(!been_traversed[new_state_val[A]][new_state_val[B]]){
+                        q.push(new_state);
+                        been_traversed[new_state_val[A]][new_state_val[B]] = true;
                     }
                 }
             }while(!q.empty());
-            if(S == ""){
-                S = "No solution.";
-            } 
-            else{
-                State currState(a_goal,b_goal,c_goal);
-                while(currState.to_string() != start.to_string()){
-                    currState = beenTraversed[currState.a][currState.b];
-                    S = currState.directions + "\n" + S;
-                }
+            if(!(*cur_state == goal_state)){
+                return "No solution.";
             }
-                return S;
+            while(cur_state != nullptr){
+                S = cur_state->to_string() + '\n' + S;
+                cur_state = cur_state->parent;
+            }
+            return S;
         }
 };
+
 int main(int argc, char * const argv[]) {
     /**
     * This main function process all the strings and checks whether they are valid problems to attempt to solve
@@ -267,7 +178,7 @@ int main(int argc, char * const argv[]) {
         cerr << "Error: Total gallons in goal state must be equal to the capacity of jug C."<< endl;
          return 1;
     }
-    WaterJugPuzzle p(arr[0],arr[1],arr[2],arr[3],arr[4],arr[5]);
-    cout << p.SolveWaterJug() << endl;
+    WaterJugPuzzle p(arr);
+    cout << p.SolveWaterJug();
     return 0;
 }
